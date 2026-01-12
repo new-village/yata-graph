@@ -1,0 +1,16 @@
+processor: src.icij_processor
+sources:
+  - table: nodes_entities
+    path: data/nodes-entities.csv
+    label: Entity
+  - table: nodes_addresses
+    path: data/nodes-addresses.csv
+    label: Address
+  - table: nodes_intermediaries
+    path: data/nodes-intermediaries.csv
+    label: Intermediary
+  - table: nodes_officers
+    path: data/nodes-officers.csv
+    label: Officer
+  - table: relationships
+    path: data/relationships.csv
