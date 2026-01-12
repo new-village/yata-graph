@@ -29,7 +29,9 @@ This directory contains the VS Code Dev Container configuration for the nvv-grap
 
 ## Data Directory
 
-Make sure you have a `/data` directory on your host machine. This will be mounted into the container at `/workspaces/nvv-graph/data` for DuckDB/SQLite data processing.
+The Dev Container is configured to mount the host's `/data` directory to `/workspaces/nvv-graph/data` for DuckDB/SQLite data processing.
+
+### Linux/macOS Setup
 
 If you don't have a `/data` directory, create it first:
 ```bash
@@ -37,4 +39,28 @@ sudo mkdir -p /data
 sudo chmod 755 /data
 ```
 
-Alternatively, you can modify the mount path in `devcontainer.json` to point to a different location.
+### Windows Setup
+
+On Windows, the `/data` path won't work directly. You have two options:
+
+1. **Modify the mount in `devcontainer.json`** to use a Windows path:
+   ```json
+   "mounts": [
+       "source=C:\\data,target=/workspaces/nvv-graph/data,type=bind"
+   ]
+   ```
+
+2. **Use WSL2** and create the directory in WSL:
+   ```bash
+   sudo mkdir -p /data
+   sudo chmod 755 /data
+   ```
+
+### Custom Data Directory
+
+To use a different location, modify line 38 in `.devcontainer/devcontainer.json`:
+```json
+"mounts": [
+    "source=/your/custom/path,target=/workspaces/nvv-graph/data,type=bind"
+]
+```

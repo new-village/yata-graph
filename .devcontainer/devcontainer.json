@@ -31,7 +31,7 @@
 	"forwardPorts": [8000],
 
 	// Use 'postCreateCommand' to run commands after the container is created
-	"postCreateCommand": "pip install --user -r requirements.txt",
+	"postCreateCommand": "pip install -r requirements.txt",
 
 	// Configure mount for data directory
 	"mounts": [
