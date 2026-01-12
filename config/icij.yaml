@@ -12,4 +12,4 @@ sources:
     path: data/nodes-officers.parquet
     label: Officer
   - table: relationships
-    path: data/relationships.parquet
+    path: data/relationships-typed.parquet
