@@ -1,7 +1,6 @@
 {
-	"name": "nvv-graph Python 3.12",
-	"image": "mcr.microsoft.com/devcontainers/python:3.12",
-	
+	"name": "nvv-graph Python 3.14",
+	"image": "mcr.microsoft.com/devcontainers/python:3.14",
 	// Configure tool-specific properties
 	"customizations": {
 		"vscode": {
@@ -26,24 +25,21 @@
 			]
 		}
 	},
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally
-	"forwardPorts": [8000],
-
+	"forwardPorts": [
+		8000
+	],
 	// Use 'postCreateCommand' to run commands after the container is created
 	"postCreateCommand": "pip install -r requirements.txt",
-
 	// Configure mount for data directory
 	"mounts": [
 		"source=/data,target=/workspaces/nvv-graph/data,type=bind"
 	],
-
 	// Set environment variables optimized for DuckDB/SQLite data processing
 	"containerEnv": {
 		"PYTHONUNBUFFERED": "1",
-		"DUCKDB_PYTHON_VERSION": "3.12"
+		"DUCKDB_PYTHON_VERSION": "3.14"
 	},
-
 	// Configure features for better performance
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
@@ -55,7 +51,6 @@
 			"userGid": "automatic"
 		}
 	},
-
 	// Uncomment to connect as root instead
 	// "remoteUser": "root"
 	"remoteUser": "vscode"

@@ -16,7 +16,7 @@
     - SQLite の整合性を維持するため、マウントされたファイルに対する同時書き込みを制限する「単一インスタンス運用」を原則とする。
 
 ## 3. アプリケーション仕様 (Application Spec)
-- **Framework:** FastAPI (Python 3.12)。
+- **Framework:** FastAPI (Python 3.14).
 - **Database Abstraction:**
   - **SQLAlchemy (ORM)** を採用。SQLite への依存を抽象化し、将来的な PostgreSQL 等へのデータベース切り替えを容易にする。
 - **Authentication & Authorization:**
