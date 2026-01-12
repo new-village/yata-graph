@@ -1,3 +1,4 @@
+processor: src.processor
 sources:
   - table: nodes_entities
     path: data/nodes-entities.csv
