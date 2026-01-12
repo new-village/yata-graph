@@ -10,11 +10,17 @@ def load_config(config_path: str = "config/icij.yaml") -> dict:
 def get_connection(database: str = ":memory:") -> duckdb.DuckDBPyConnection:
     return duckdb.connect(database)
 
+from src import processor
+
 def load_data(
     config_path: str = "config/icij.yaml", 
     conn: Optional[duckdb.DuckDBPyConnection] = None
 ) -> duckdb.DuckDBPyConnection:
     config = load_config(config_path)
+    
+    # Process data (CSV -> Parquet, Enrichment)
+    # This returns an in-memory config dict with updated paths to the processed parquet files
+    processed_config = processor.process_data(config)
     
     if conn is None:
         conn = get_connection()
@@ -27,8 +33,8 @@ def load_data(
     node_labels = {}
     relationships_table = ""
     
-    # 1. Load Tables (as TEMP Tables)
-    for source in config.get("sources", []):
+    # 1. Load Tables (from processed paths)
+    for source in processed_config.get("sources", []):
         table_name = source["table"]
         file_path = source["path"]
         label = source.get("label")
@@ -52,9 +58,6 @@ def load_data(
         vertex_defs.append(f"{table} LABEL {label}")
     
     # Edge Tables definition
-    # Since relationships are pre-typed in 'relationships_typed.parquet', we can query distinct types directly
-    # from the loaded TEMP table.
-    
     combinations = conn.execute(f"""
         SELECT DISTINCT start_label, end_label FROM {relationships_table}
     """).fetchall()
