@@ -51,17 +51,18 @@ def test_get_neighbors_officer_both(api_client):
     """
     Officer A (12000001) -> Entity X (11000001)
     Direction 'both' should find Entity X.
+    Start node (Officer A) should NOT be in 'nodes' list.
     """
     response = api_client.get("/node/officer/12000001/neighbors?direction=both")
     assert response.status_code == 200
     res = response.json()
     
     # Verify Nodes
-    # Expect 2 nodes: Officer A and Entity X
+    # Expect 1 node: Entity X
     node_ids = {n["id"] for n in res["nodes"]}
-    assert "12000001" in node_ids
     assert "11000001" in node_ids
-    assert len(res["nodes"]) == 2
+    assert "12000001" not in node_ids
+    assert len(res["nodes"]) == 1
     
     # Verify Edges
     assert len(res["edges"]) == 1
@@ -72,34 +73,21 @@ def test_get_neighbors_officer_both(api_client):
 
 def test_get_neighbors_direction_out(api_client):
     # Officer A -> Entity X
-    # Out from Officer A should find Entity X
     response = api_client.get("/node/officer/12000001/neighbors?direction=out")
     assert response.status_code == 200
     res = response.json()
-    assert len(res["nodes"]) == 2
+    assert len(res["nodes"]) == 1
+    assert res["nodes"][0]["id"] == "11000001"
     assert len(res["edges"]) == 1
 
 def test_get_neighbors_direction_in(api_client):
     # Officer A -> Entity X
-    # In to Officer A should find nothing (unless there is incoming edge)
-    # Based on our valid CSV data, Officer A only has outgoing to Entity X.
+    # In to Officer A should find nothing
     response = api_client.get("/node/officer/12000001/neighbors?direction=in")
     assert response.status_code == 200
     res = response.json()
-    # Should contain only self node? Or empty?
-    # Logic: MATCH (a)<-[r]-(b) WHERE a.id=...
-    # If no match, result is empty from query.
-    # Our code iteration won't run.
-    # Correct behavior: return valid JSON with empty lists?
-    # Or include self node if we want?
-    # Current implementation relies on finding edges to populate nodes (from a and b).
-    # If no edges found, nodes list is empty.
-    # This might be unexpected if we want to show the center node isolated.
-    # But strictly speaking, neighbors are 0.
-    
     assert len(res["edges"]) == 0
-    # Current impl: nodes empty if no edges found
-    assert len(res["nodes"]) == 0 
+    assert len(res["nodes"]) == 0
 
 def test_get_neighbors_entity_in(api_client):
     # Entity X (11000001) <- Officer A
@@ -109,15 +97,28 @@ def test_get_neighbors_entity_in(api_client):
     res = response.json()
     node_ids = {n["id"] for n in res["nodes"]}
     assert "12000001" in node_ids
-    assert len(res["nodes"]) == 2
+    assert "11000001" not in node_ids
+    assert len(res["nodes"]) == 1
     assert len(res["edges"]) == 1
 
 def test_get_neighbors_invalid_node_type(api_client):
+    # Expect 400
     response = api_client.get("/node/invalid/123/neighbors")
     assert response.status_code == 400
 
-def test_get_neighbors_limit(api_client):
-    # Not enough data to meaningful limit test, but verify param works
-    response = api_client.get("/node/officer/12000001/neighbors?limit=1")
+def test_get_neighbors_count_officer(api_client):
+    # Officer A -> Entity X
+    response = api_client.get("/node/officer/12000001/neighbors/count?direction=both")
     assert response.status_code == 200
-    assert len(response.json()["edges"]) <= 1
+    res = response.json()
+    assert res["count"] == 1
+    assert res["details"].get("entity") == 1
+
+def test_get_neighbors_count_entity_in(api_client):
+    # Entity X <- Officer A
+    response = api_client.get("/node/entity/11000001/neighbors/count?direction=in")
+    assert response.status_code == 200
+    res = response.json()
+    assert res["count"] == 1
+    assert res["details"].get("officer") == 1
+
