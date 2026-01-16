@@ -65,3 +65,45 @@
     "data": null
   }
   ```
+
+### GET `/node/{node_type}/{id}/neighbors`
+指定されたノードの周辺ノードおよびエッジを取得します。起点ノード自体はレスポンスの `nodes` に含まれません。
+
+- **Parameters**:
+  - `node_type` (path): 起点ノードのタイプ (例: `officer`, `entity`)
+  - `id` (path): 起点ノードの ID
+  - `depth` (query, int, default=1): 探索する深さ。現在は `1` のみ動作を保証。
+  - `direction` (query, string, default=`both`): 探索方向。`both`, `in`, `out`。
+
+- **Response**:
+  ```json
+  {
+    "nodes": [
+      { "id": "11000001", "node_type": "entity", "properties": { "name": "Entity X", ... } }
+    ],
+    "edges": [
+      { "id": "rel_12000001_11000001", "source": "12000001", "target": "11000001", "type": "related_to_officer_entity" }
+    ]
+  }
+  ```
+
+### GET `/node/{node_type}/{id}/neighbors/count`
+指定されたノードの隣接ノードの総数と、ノードタイプごとの内訳を取得します。
+
+- **Parameters**:
+  - `node_type` (path): 起点ノードのタイプ
+  - `id` (path): 起点ノードの ID
+  - `direction` (query, string, default=`both`): 探索方向。`both`, `in`, `out`。
+
+- **Response**:
+  ```json
+  {
+    "count": 5,
+    "details": {
+      "entity": 3,
+      "address": 2
+    }
+  }
+  ```
+- **Errors**:
+  - `400 Bad Request`: 無効な `node_type` が指定された場合。
