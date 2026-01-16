@@ -40,12 +40,13 @@
 
 ## 📡 API エンドポイント (API Endpoints)
 
-### GET `/node/{node_type}/{node_id}`
-指定された種別 (`node_type`) と ID (`node_id`) に一致するノード情報を取得します。
+### GET `/node/{node_type}/{id}`
+指定された種別 (`node_type`) と ID (`id`) に一致するノード情報を取得します。
 
 - **Parameters**:
-  - `node_type` (path): `config/icij.yaml` の `label` で定義されたノード種別 (例: `Officer`, `Entity`)
-  - `node_id` (path): ノードのユニーク ID (例: `12000001`)
+  - `node_type` (path): `config/icij.yaml` の `node_type` で定義されたノード種別 (例: `officer`, `entity`)
+  - `id` (path): ノードのユニーク ID (例: `12000001`)
+
 - **Response**:
   ```json
   {
