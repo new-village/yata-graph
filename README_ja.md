@@ -40,11 +40,10 @@
 
 ## 📡 API エンドポイント (API Endpoints)
 
-### GET `/nodes/{node_type}/{id}`
+### GET `/api/v1/nodes/{id}`
 指定された種別 (`node_type`) と ID (`id`) に一致するノード情報を取得します。
 
 - **Parameters**:
-  - `node_type` (path): ノード種別 (例: `officer`, `entity`)。データ内の `node_type` カラムと一致する必要があります。
   - `id` (path): ノードのユニーク ID (例: `12000001`)
 - **Response**:
   ```json
@@ -66,11 +65,10 @@
   }
   ```
 
-### GET `/nodes/{node_type}/{id}/neighbors`
+### GET `/api/v1/nodes/{id}/neighbors`
 指定されたノードの周辺ノードおよびエッジを取得します。起点ノード自体はレスポンスの `nodes` に含まれません。
 
 - **Parameters**:
-  - `node_type` (path): 起点ノードのタイプ (例: `officer`, `entity`)
   - `id` (path): 起点ノードの ID
   - `depth` (query, int, default=1): 探索する深さ。現在は `1` のみ動作を保証。
   - `direction` (query, string, default=`both`): 探索方向。`both`, `in`, `out`。
@@ -87,11 +85,10 @@
   }
   ```
 
-### GET `/nodes/{node_type}/{id}/neighbors/count`
+### GET `/api/v1/nodes/{id}/neighbors/count`
 指定されたノードの隣接ノードの総数と、ノードタイプごとの内訳を取得します。
 
 - **Parameters**:
-  - `node_type` (path): 起点ノードのタイプ
   - `id` (path): 起点ノードの ID
   - `direction` (query, string, default=`both`): 探索方向。`both`, `in`, `out`。
 

@@ -23,8 +23,8 @@
 - **Authentication & Authorization:**
   - OAuth2 + JWT による認証。SQLAlchemy を通じてユーザー情報および監査ログを管理する。
 - **主要 API Endpoints:**
-  - `GET /nodes/{node_type}/{id}`
-  - `GET /nodes/{node_type}/{id}/neighbors`
+  - `GET /api/v1/nodes/{id}`
+  - `GET /api/v1/nodes/{id}/neighbors`
   - `POST /graph/search`
   - `POST /auth/login` / `GET /auth/me` / `DELETE /auth/logout`
 
