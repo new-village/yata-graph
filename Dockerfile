@@ -22,7 +22,7 @@ FROM python:3.14-slim AS runtime
 WORKDIR /app
 
 # Create non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN groupadd -r appuser && useradd -r -m -g appuser appuser
 
 # Copy virtualenv from builder
 COPY --from=builder /app/venv /app/venv
@@ -38,6 +38,10 @@ RUN mkdir -p /app/data && chown -R appuser:appuser /app/data
 
 # Switch to non-root user
 USER appuser
+
+# Pre-install DuckDB extensions (Best Practice for Cloud Run / Containers)
+# efficiently caches the extension in the image provided HOME is writable (checked by -m earlier)
+RUN python -c "import duckdb; con = duckdb.connect(); con.install_extension('duckpgq'); con.load_extension('duckpgq')"
 
 # Expose port
 EXPOSE 8080
