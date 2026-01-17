@@ -28,7 +28,10 @@ def process_data(config: Dict[str, Any]) -> Dict[str, Any]:
             continue
 
         # Check file existence
-        if not os.path.exists(file_path) and file_path.endswith(".csv"):
+        found = False
+        if os.path.exists(file_path):
+            found = True
+        elif file_path.endswith(".csv"):
              # Fallback to parquet
              parquet_path = file_path.replace(".csv", ".parquet")
              if os.path.exists(parquet_path):
@@ -36,6 +39,23 @@ def process_data(config: Dict[str, Any]) -> Dict[str, Any]:
                  file_path = parquet_path
                  # Update config reference
                  source["path"] = parquet_path
+                 found = True
+
+        if not found:
+            # DEBUG: Log directory contents to help diagnose Cloud Run mount issues
+            dir_path = os.path.dirname(file_path) or "."
+            print(f"ERROR: File not found: {file_path}")
+            if os.path.exists(dir_path):
+                print(f"DEBUG: Contents of directory '{dir_path}':")
+                try:
+                    for item in os.listdir(dir_path):
+                        print(f"  - {item}")
+                except Exception as e:
+                    print(f"  (Could not list directory: {e})")
+            else:
+                print(f"DEBUG: Directory '{dir_path}' does not exist.")
+            
+            raise FileNotFoundError(f"Required data file not found: {file_path}. See log for directory contents.")
 
         if file_path.endswith(".csv"):
             parquet_path = file_path.replace(".csv", ".parquet")
@@ -65,11 +85,29 @@ def process_data(config: Dict[str, Any]) -> Dict[str, Any]:
         rel_path = rel_source["path"]
         
         # Check existence and fallback
-        if not os.path.exists(rel_path) and rel_path.endswith(".csv"):
+        found_rel = False
+        if os.path.exists(rel_path):
+            found_rel = True
+        elif rel_path.endswith(".csv"):
              parquet_path = rel_path.replace(".csv", ".parquet")
              if os.path.exists(parquet_path):
                  print(f"Notice: {rel_path} not found. Using {parquet_path}...")
                  rel_path = parquet_path
+                 found_rel = True
+        
+        if not found_rel:
+             dir_path = os.path.dirname(rel_path) or "."
+             print(f"ERROR: Relationships file not found: {rel_path}")
+             if os.path.exists(dir_path):
+                print(f"DEBUG: Contents of directory '{dir_path}':")
+                try:
+                    for item in os.listdir(dir_path):
+                        print(f"  - {item}")
+                except Exception as e:
+                    print(f"  (Could not list directory: {e})")
+             else:
+                print(f"DEBUG: Directory '{dir_path}' does not exist.")
+             raise FileNotFoundError(f"Required relationships file not found: {rel_path}")
         # Output as relationships.parquet as requested (overwriting if it was the input? No, Input is csv)
         # If input is .csv, output is .parquet.
         # If input is already .parquet, we might be enriching it again? 
