@@ -22,7 +22,7 @@ FROM python:3.14-slim AS runtime
 WORKDIR /app
 
 # Create non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN groupadd -r appuser && useradd -r -m -g appuser appuser
 
 # Copy virtualenv from builder
 COPY --from=builder /app/venv /app/venv

@@ -36,6 +36,7 @@ def load_data(
     
     # Enable DuckPGQ extensions
     print("Enabling DuckPGQ extension...")
+    conn.execute("SET home_directory='/tmp'")
     conn.execute("INSTALL duckpgq FROM community")
     conn.execute("LOAD duckpgq")
 
