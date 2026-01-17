@@ -160,6 +160,7 @@ def get_node_neighbors(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/nodes/{id}/neighbors/count")
+
 def get_node_neighbors_count(
     id: str,
     direction: str = "both",
