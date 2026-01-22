@@ -27,3 +27,13 @@ class NeighborsCountDetails(BaseModel):
 class NeighborsCountResponse(BaseModel):
     count: int = Field(..., description="Total count of neighbors")
     details: Dict[str, int] = Field(..., description="Breakdown of neighbor counts by node type")
+
+class ColumnInfo(BaseModel):
+    name: str = Field(..., description="Column name")
+    type: str = Field(..., description="Column data type")
+    nullable: bool = Field(..., description="Whether the column can be NULL")
+
+class SchemaResponse(BaseModel):
+    nodes: List[ColumnInfo] = Field(..., description="Schema definition for nodes table")
+    edges: List[ColumnInfo] = Field(..., description="Schema definition for edges table")
+

@@ -1,9 +1,43 @@
 from fastapi import APIRouter, Depends, HTTPException
 import duckdb
 from src.deps import get_db
-from src.schemas import NodeResponse, NeighborsResponse, NeighborsCountResponse, Node, Edge
+from src.schemas import NodeResponse, NeighborsResponse, NeighborsCountResponse, Node, Edge, SchemaResponse, ColumnInfo
 
 router = APIRouter()
+
+@router.get("/schema", response_model=SchemaResponse)
+def get_schema(
+    conn: duckdb.DuckDBPyConnection = Depends(get_db)
+):
+    """
+    Get schema definition for nodes and edges tables.
+    """
+    try:
+        nodes_df = conn.execute("DESCRIBE nodes").df()
+        edges_df = conn.execute("DESCRIBE edges").df()
+        
+        nodes_schema = []
+        for _, row in nodes_df.iterrows():
+            nodes_schema.append(ColumnInfo(
+                name=row['column_name'],
+                type=row['column_type'],
+                nullable=True if row['null'] == 'YES' else False
+            ))
+            
+        edges_schema = []
+        for _, row in edges_df.iterrows():
+            edges_schema.append(ColumnInfo(
+                name=row['column_name'],
+                type=row['column_type'],
+                nullable=True if row['null'] == 'YES' else False
+            ))
+            
+        return SchemaResponse(nodes=nodes_schema, edges=edges_schema)
+
+    except Exception as e:
+        print(f"Schema Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/nodes/{id}", response_model=NodeResponse)
 def get_node(
