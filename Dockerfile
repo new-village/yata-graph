@@ -34,8 +34,8 @@ COPY src /app/src
 # Copy data directory (assuming it's populated or volume mounted)
 # For production image, data is usually external volume. 
 # But we need the directory existence.
-COPY data /app/data
-RUN mkdir -p /app/data && chown -R appuser:appuser /app/data
+ENV DATA_DIR=/data
+RUN mkdir -p /data && chown -R appuser:appuser /data
 
 # Switch to non-root user
 USER appuser
