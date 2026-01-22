@@ -30,10 +30,11 @@ ENV PATH="/app/venv/bin:$PATH"
 
 # Copy application code
 COPY src /app/src
-COPY config /app/config
+
 # Copy data directory (assuming it's populated or volume mounted)
 # For production image, data is usually external volume. 
 # But we need the directory existence.
+COPY data /app/data
 RUN mkdir -p /app/data && chown -R appuser:appuser /app/data
 
 # Switch to non-root user
